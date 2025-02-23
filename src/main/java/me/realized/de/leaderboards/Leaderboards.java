@@ -26,20 +26,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class Leaderboards extends DuelsExtension implements Listener {
+    
+    private LeaderboardManager leaderboardManager;
+    private KitManager kitManager;
+    @Getter
+    private Config configuration;
+    @Getter
+    private VaultHook vaultHook;
 
     @Getter
     private UserManager userManager;
     @Getter
-    private KitManager kitManager;
-    @Getter
     private ArenaManager arenaManager;
-
-    @Getter
-    private Config configuration;
-    @Getter
-    private LeaderboardManager leaderboardManager;
-    @Getter
-    private VaultHook vaultHook;
 
     private final List<Updatable<Kit>> updatables = new ArrayList<>();
     private int updateTask;
@@ -187,4 +185,12 @@ public class Leaderboards extends DuelsExtension implements Listener {
     public void on(final KitCreateEvent event) {
         updatables.forEach(updatable -> updatable.update(event.getKit()));
     }
+
+    public LeaderboardManager getLeaderboardManager() {
+        return this.leaderboardManager;
+    }
+    public KitManager getKitManager() {
+        return this.kitManager;
+    }
+
 }

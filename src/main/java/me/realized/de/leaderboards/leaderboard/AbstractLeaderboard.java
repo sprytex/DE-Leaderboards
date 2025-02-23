@@ -21,26 +21,15 @@ public abstract class AbstractLeaderboard implements Leaderboard {
     protected final Leaderboards extension;
     protected final Duels api;
     protected final Config config;
+    protected final String name;
 
-    @Getter
     private final File file;
-    @Getter
-    private final String name;
-    @Getter
     private final LeaderboardType type;
-    @Getter
-    private final String dataType;
-    @Getter
-    @Setter
     private Location location;
-    @Getter
-    @Setter
     private boolean changed;
-    @Getter
-    @Setter
     private TopEntry cached;
-    @Getter
     private final FileConfiguration configuration;
+    protected final String dataType;
 
     public AbstractLeaderboard(final Leaderboards extension, final Duels api, final LeaderboardType type, final String name, final String dataType, final Location location) {
         this.extension = extension;
@@ -67,7 +56,7 @@ public abstract class AbstractLeaderboard implements Leaderboard {
         Objects.requireNonNull(dataType, "data-type is null");
 
         final ConfigurationSection locationSection = configuration.getConfigurationSection("location");
-        Objects.requireNonNull(type, "location is null");
+        Objects.requireNonNull(locationSection, "location is null");
 
         final String worldName = locationSection.getString("world");
         final World world;
@@ -76,8 +65,9 @@ public abstract class AbstractLeaderboard implements Leaderboard {
             throw new NullPointerException("worldName or world is null");
         }
 
-        this.dataType = dataType;
         this.location = new Location(world, locationSection.getDouble("x"), locationSection.getDouble("y"), locationSection.getDouble("z"));
+
+        this.dataType = dataType;
     }
 
     protected abstract void onUpdate(final TopEntry entry);
@@ -86,7 +76,7 @@ public abstract class AbstractLeaderboard implements Leaderboard {
         if (entry == null) {
             return;
         }
-
+        
         if (changed || cached == null || !cached.equals(entry)) {
             cached = entry;
             changed = false;
@@ -101,8 +91,8 @@ public abstract class AbstractLeaderboard implements Leaderboard {
 
     @Override
     public void remove() {
-        file.delete();
-        onRemove();
+        file.delete();  
+        onRemove();     
     }
 
     @Override
@@ -124,4 +114,38 @@ public abstract class AbstractLeaderboard implements Leaderboard {
             extension.error("Failed to save leaderboard '" + name + "' (type " + type.name() + ")!", ex);
         }
     }
+
+    @Override
+    public Location getLocation() {
+        return this.location;
+    }
+
+    @Override
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public FileConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    public LeaderboardType getType() {
+        return this.type;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
+
+    public boolean isChanged() {
+        return this.changed;
+    }
+    @Override
+    public String getDataType() {
+        return this.dataType;
+    }
+    public String getName() {
+        return this.name;
+    }
+
 }

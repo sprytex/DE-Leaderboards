@@ -17,4 +17,6 @@ public interface Leaderboard {
     void remove();
 
     void save();
+
+    void setLocation(Location location);
 }
